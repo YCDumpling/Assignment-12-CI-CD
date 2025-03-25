@@ -31,16 +31,6 @@ def get_data():
     return data
 
 
-def save_to_db(data):
-    """
-    Insert the given data into the database.
-    """
-    query = f"INSERT INTO mytable (column1, column2) VALUES ('{data}', 'Another Value')"
-
-    with pymysql.connect(**db_config) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-        connection.commit()
 
 def send_email(to, subject, body):
     """
