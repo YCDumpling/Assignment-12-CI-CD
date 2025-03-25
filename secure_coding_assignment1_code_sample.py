@@ -26,10 +26,24 @@ def get_data():
     """
     Fetch data from an API endpoint and return it as a string.
     """
-    url = "http://insecure-api.com/get-data"
-    data = urlopen(url).read().decode()
+    with urlopen("http://insecure-api.com/get-data") as response:
+        data = response.read().decode()
     return data
 
+
+def save_to_db(data):
+    """
+    Insert data into a sample table in the database.
+
+    Args:
+        data (str): Data to be stored in the database.
+    """
+    # Safer parameterized query to avoid SQL injection
+    query = "INSERT INTO mytable (column1, column2) VALUES (%s, %s)"
+    with pymysql.connect(**db_config) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(query, (data, "Another Value"))
+        connection.commit()
 
 
 def send_email(to, subject, body):
