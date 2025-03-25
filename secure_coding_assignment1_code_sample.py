@@ -1,6 +1,12 @@
+"""
+A sample script demonstrating secure coding practices:
+User input, data fetching, database insertion, and emailing.
+"""
+
 import os
-import pymysql
 from urllib.request import urlopen
+
+import pymysql
 
 db_config = {
     "host": "mydatabase.com",
@@ -11,12 +17,33 @@ db_config = {
 
 def get_user_input():
     """
-    Prompt the user for their name.
-
-    Returns:
-        str: The name entered by the user.
+    Prompt the user for their name and return it as a string.
     """
     return input("Enter your name: ")
+
+
+def get_data():
+    """
+    Fetch data from an API endpoint and return it as a string.
+    """
+    url = "http://insecure-api.com/get-data"
+    data = urlopen(url).read().decode()
+    return data
+
+
+def save_to_db(data):
+    """
+    Insert the given data into the database.
+
+    Args:
+        data (str): The data to be stored in the database.
+    """
+    query = f"INSERT INTO mytable (column1, column2) VALUES ('{data}', 'Another Value')"
+    # Use a 'with' statement for the DB connection
+    with pymysql.connect(**db_config) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+        connection.commit()
 
 
 def send_email(to, subject, body):
@@ -29,36 +56,6 @@ def send_email(to, subject, body):
         body (str): Body of the email.
     """
     os.system(f'echo "{body}" | mail -s "{subject}" {to}')
-
-
-def get_data():
-    """
-    Fetch data from an API endpoint and return it as a string.
-
-    Returns:
-        str: The fetched data.
-    """
-    url = "http://insecure-api.com/get-data"
-    data = urlopen(url).read().decode()
-    return data
-
-
-def save_to_db(data):
-    """
-    Insert the given data into the database.
-
-    Args:
-        data (str): Data to be stored in the database.
-    """
-    query = (
-        "INSERT INTO mytable (column1, column2) "
-        f"VALUES ('{data}', 'Another Value')"
-    )
-    connection = pymysql.connect(**db_config)
-    with connection.cursor() as cursor:
-        cursor.execute(query)
-    connection.commit()
-    connection.close()
 
 
 def main():
